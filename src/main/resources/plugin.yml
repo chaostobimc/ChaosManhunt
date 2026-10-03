@@ -1,0 +1,31 @@
+name: ChaosManhunt
+version: '${project.version}'
+main: de.chaostobimc.chaosmanhunt.ChaosManhunt
+api-version: '1.21'
+authors: [ ChaosTobimC ]
+description: 'Manhunt-Event-Steuerung: Tracker-Kompass, Respawn-Sperre, dynamischer Actionbar-Timer mit Hex-Gradient.'
+website: 'https://github.com/chaostobimc/ChaosManhunt'
+prefix: ChaosManhunt
+load: POSTWORLD
+
+commands:
+  manhunt:
+    description: 'Steuert das Manhunt-Event und oeffnet das Admin-Panel.'
+    usage: '/manhunt help'
+    aliases: [ mh ]
+    permission: manhunt.admin
+    permission-message: 'Du hast keine Berechtigung fuer diesen Befehl. (manhunt.admin)'
+
+permissions:
+  manhunt.admin:
+    description: 'Voller Zugriff auf das Manhunt-Event (Admin-Panel, Start/Stop, Rollen).'
+    default: op
+    children:
+      manhunt.manage: true
+      manhunt.play: true
+  manhunt.manage:
+    description: 'Darf das Event starten/stoppen und Rollen verteilen.'
+    default: op
+  manhunt.play:
+    description: 'Marker-Permission fuer Runner/Hunter.'
+    default: true

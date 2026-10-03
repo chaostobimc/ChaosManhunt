@@ -1,0 +1,118 @@
+# Hinweis: GitHub fuehrt nur Workflows unter .github/workflows/ aus. Diese Datei
+# wird deshalb einmalig an ihren Wirkungsort verschoben:
+#     git mv ci/build.yml .github/workflows/build.yml
+# Danach laeuft der Build bei jedem Push (Maven-Build, Unit-Tests und ein echter
+# Paper-1.21.11-Smoke-Test mit /mh-Diagnose).
+name: Build & Test
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Maven Build (Paper 1.21.11, Java 21)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: JDK 21 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build + Unit-Tests
+        run: mvn -B -ntp clean verify
+
+      - name: Plugin-JAR als Artifact hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: ChaosManhunt
+          path: target/ChaosManhunt-*.jar
+          if-no-files-found: error
+
+  smoke-test:
+    name: Server-Smoke-Test (echter Paper-Server)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Plugin-JAR herunterladen
+        uses: actions/download-artifact@v4
+        with:
+          name: ChaosManhunt
+          path: server/plugins
+
+      - name: JDK 21 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Paper 1.21.11 herunterladen
+        run: |
+          cd server
+          URL=$(curl -s -H 'User-Agent: ChaosManhunt-CI/1.0 (https://github.com/chaostobimc/ChaosManhunt)' \
+            'https://fill.papermc.io/v3/projects/paper/versions/1.21.11/builds' \
+            | jq -r '[.[] | select(.channel == "STABLE")][0].downloads["server:default"].url')
+          echo "Download: $URL"
+          curl -s -f -o paper.jar "$URL"
+          ls -la paper.jar
+          echo "eula=true" > eula.txt
+          printf 'online-mode=false\nlevel-type=minecraft\\:flat\nspawn-protection=0\nmax-players=5\nview-distance=4\nsimulation-distance=4\nsync-chunk-writes=false\n' > server.properties
+
+      - name: Server starten und Befehle pruefen
+        run: |
+          cd server
+          {
+            sleep 45
+            echo "mh diagnose"
+            sleep 2
+            echo "mh status"
+            sleep 2
+            echo "mh start"
+            sleep 2
+            echo "mh runner Notch"
+            sleep 2
+            echo "mh hunter list"
+            sleep 2
+            echo "mh reload"
+            sleep 2
+            echo "mh unbekannt"
+            sleep 2
+            echo "stop"
+          } | timeout 300 java -Xms1G -Xmx2G -jar paper.jar --nogui > server.log 2>&1 || true
+
+          echo "==================== relevante Logzeilen ===================="
+          grep -iE "ChaosManhunt|Diagnose|Manhunt|Exception|Caused by|Unknown command|Cannot load" server.log || true
+          echo "============================================================="
+
+          echo "-- pruefe, dass das Plugin geladen wurde"
+          grep -q "ChaosManhunt .* aktiviert" server.log
+          echo "-- pruefe, dass der Server sauber gestartet ist"
+          grep -q "Done (" server.log
+
+          echo "-- pruefe auf fehlende Nachrichten-Schluessel"
+          if grep -q "Fehlender Nachrichten-Schluessel" server.log; then
+            echo "FEHLER: Es fehlen Nachrichten-Schluessel in der messages.yml!"
+            grep "Fehlender Nachrichten-Schluessel" server.log
+            exit 1
+          fi
+
+          echo "-- pruefe auf Exceptions im Plugin"
+          if grep -qiE "Exception.*chaosmanhunt|chaosmanhunt.*Exception" server.log; then
+            echo "FEHLER: Exception im Plugin entdeckt!"
+            exit 1
+          fi
+
+          echo "-- pruefe, dass der Diagnose-Selbsttest erfolgreich war"
+          if grep -q "✘" server.log; then
+            echo "FEHLER: Diagnose hat einen Fehler gemeldet!"
+            exit 1
+          fi
+
+          echo "Smoke-Test erfolgreich."

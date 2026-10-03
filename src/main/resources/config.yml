@@ -1,0 +1,161 @@
+# ==========================================================================
+#  ChaosManhunt - Konfiguration (Paper 1.21.11)
+#  Alle Text-Werte unterstuetzen:
+#    &0-&f  = klassische Farben          &l &o &n &m &k = Formatierungen
+#    &#RRGGBB = freie Hex-Farben (echtes RGB)
+#  Aenderungen koennen live mit /mh reload eingelesen werden.
+# ==========================================================================
+
+config-version: 1
+
+# --------------------------------------------------------------------------
+#  Spielablauf
+# --------------------------------------------------------------------------
+game:
+  # Countdown in Sekunden, bevor das Event startet (0 = sofort starten).
+  countdown-seconds: 5
+
+  # Respawn-Sperre fuer Hunter in Sekunden (Anforderung: 120 = 2 Minuten).
+  respawn-lock-seconds: 120
+
+  # Spieler, die waehrend eines laufenden Events joinen, werden automatisch Hunter.
+  auto-hunters-on-join: true
+
+  # Wenn der Runner das Spiel verlaesst: Event sofort beenden?
+  # false = das Event laeuft weiter, bis der Runner zurueckkommt oder ein Admin stoppt.
+  end-game-when-runner-quits: false
+
+  # Beim Stoppen (oder Plugin-Deaktivierung) den vorherigen Spielmodus der
+  # Teilnehmer wiederherstellen (Spectator -> vorheriger Modus).
+  restore-gamemode-on-stop: true
+
+  # Welt, in der Hunter nach der Respawn-Sperre landen.
+  # Leer lassen = Hauptwelt des Servers.
+  spawn-world: ''
+
+# --------------------------------------------------------------------------
+#  Hunter (Tod, Drops, Respawn)
+# --------------------------------------------------------------------------
+hunter:
+  # Wohin der Hunter nach Ablauf der Respawn-Sperre zurueckkehrt:
+  #   WORLD_SPAWN    = Spawn der Hauptwelt (Standard fuer Manhunt)
+  #   DEATH_LOCATION = exakt an die Stelle, an der er gestorben ist
+  #   BED            = an sein Bett/Respawn-Anker (sonst Hauptwelt-Spawn)
+  respawn-strategy: WORLD_SPAWN
+
+  # Inventar beim Tod verlieren? (false = Items werden geloescht, nicht gedroppt)
+  drop-inventory: true
+
+  # Erfahrung beim Tod verlieren (lassen) ?
+  drop-experience: true
+
+  # Trank-Effekte beim Tod entfernen.
+  clear-effects: true
+
+  # Vanilla-Todesnachricht ("Spieler wurde von ... getoetet") anzeigen.
+  # Die Info-Zeile von ChaosManhunt wird immer zusaetzlich gesendet.
+  show-vanilla-death-message: true
+
+# --------------------------------------------------------------------------
+#  Tracker-Kompass ("Gorgii-Tracker")
+# --------------------------------------------------------------------------
+tracker:
+  # Anzeigename des Kompass-Items.
+  name: '&c&lGorgii-Tracker'
+
+  # Lore des Kompass-Items. Platzhalter:
+  #   %runner%   = Name des Runners         %target%   = Ziel-Dimension
+  #   %distance% = Entfernung in Bloecken   %direction% = Himmelsrichtung
+  #   %x% %y% %z% = Koordinaten des Runners
+  lore:
+    - '&8&m                        '
+    - '&7Ziel: &f%target%'
+    - '&7Entfernung: &f%distance% Bloecke'
+    - '&7Richtung: &f%direction% &8(&f%x%&8/&f%y%&8/&f%z%&8)'
+    - '&8&m                        '
+    - '&7Rechtsklick &8▪ &fZiel-Details'
+
+  # Hunter erhalten beim Start automatisch einen Tracker.
+  give-on-start: true
+
+  # Hunter erhalten nach der Respawn-Sperre automatisch einen neuen Tracker.
+  give-after-respawn: true
+
+  # Tracker beim Stoppen des Events aus allen Inventaren entfernen.
+  remove-on-stop: true
+
+  # Wie oft (in Ticks) die Kompass-Nadel auf den Runner ausgerichtet wird.
+  # 5 Ticks = 4x pro Sekunde (Echtzeit-Tracking).
+  update-interval-ticks: 5
+
+  # Wie oft (in Ticks) die Lore des Trackers aktualisiert wird (20 = 1 Sekunde).
+  lore-update-interval-ticks: 20
+
+  # Verhalten, wenn Runner und Hunter in unterschiedlichen Dimensionen sind:
+  #   FROZEN        = Nadel bleibt auf der letzten bekannten Position stehen
+  #                   (kein unkontrolliertes Drehen), Rechtsklick informiert.
+  #   PORTAL_SCALED = Oberwelt/Nether-Koordinaten werden umgerechnet (x8 / x8).
+  cross-dimension-mode: FROZEN
+
+  # Mindestabstand zwischen zwei Rechtsklick-Informationen (Millisekunden).
+  click-cooldown-millis: 750
+
+  # Tracker gegen Verlieren schuetzen (Drop/Behaelter/Inventar-Moves blocken).
+  protect-from-loss: true
+
+# --------------------------------------------------------------------------
+#  Actionbar-Timer (BastiGHG-Style: nur benoetigte Einheiten + Hex-Gradient)
+# --------------------------------------------------------------------------
+actionbar:
+  enabled: true
+
+  # Wer sieht den Timer?  ALL = alle Spieler | PARTICIPANTS = Runner + Hunter
+  viewers: PARTICIPANTS
+
+  # Update-Intervall in Ticks (1 = fluessige Animation).
+  interval-ticks: 1
+
+  # Anzeige waehrend das Event laeuft.
+  # Platzhalter: %time% (Gradient-Timer), %runner%, %hunters%, %state%
+  format: '%time% &8▪ &7Runner: &c%runner% &8▪ &7Hunter: &f%hunters%'
+
+  # Anzeige fuer Hunter, die ihre Respawn-Sperre absitzen.
+  # Platzhalter: %lock% (Restzeit), %time%, %runner%, %hunters%
+  lock-format: '&c&l☠ &r&7Respawn in &f%lock% &8▪ &7%time%'
+
+  gradient:
+    enabled: true
+    # Farbverlauf von links nach rechts (beliebig viele Stuetzfarben).
+    colors:
+      - '#FF4D4D'   # Rot
+      - '#FFC24D'   # Orange
+      - '#FFFF66'   # Gelb
+    # Animiert den Verlauf (laeuft fliessend durch den Text).
+    animate: true
+    # Geschwindigkeit der Animation pro Tick (0.015 = ruhig, 0.05 = schnell).
+    speed: 0.015
+
+# --------------------------------------------------------------------------
+#  Timer-Format
+# --------------------------------------------------------------------------
+timer:
+  # true  = 1h 03m 42s   (Einheiten werden bei groesseren Werten aufgefuellt)
+  # false = 1h 3m 42s
+  # Einheiten, die nicht gebraucht werden, werden immer weggelassen (15s / 4m 12s).
+  pad-zero-units: true
+
+# --------------------------------------------------------------------------
+#  Menue-Titel
+# --------------------------------------------------------------------------
+menu:
+  title: '&8Manhunt &7▪ &fAdmin-Panel'
+  runner-title: '&8Manhunt &7▪ &fRunner waehlen'
+  hunter-title: '&8Manhunt &7▪ &fHunter verwalten'
+
+# --------------------------------------------------------------------------
+#  Sounds
+# --------------------------------------------------------------------------
+sounds:
+  enabled: true
+  volume: 1.0
+  pitch: 1.0

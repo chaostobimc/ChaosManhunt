@@ -1,0 +1,185 @@
+# ==========================================================================
+#  ChaosManhunt - Nachrichten
+#  Farben: &0-&f, &l &o &n &m &k  und Hex-Farben als &#RRGGBB
+#  Zeilenumbruch: \n   (wird als neue Chat-Zeile gesendet)
+#  Platzhalter werden pro Nachricht unten dokumentiert.
+# ==========================================================================
+
+config-version: 1
+
+prefix: '&8[&c&lMH&8] &r&7'
+
+no-permission: '&cDafür fehlt dir die Berechtigung &fmanhunt.admin&c.'
+players-only: '&cDieser Befehl ist nur für Spieler verfügbar.'
+
+command:
+  header: '&8&m          &r &c&lChaosManhunt &8&m          '
+  help:
+    - '&c/mh &8▪ &7Öffnet das Admin-Panel.'
+    - '&c/mh start &8[&7Spieler&8] &8▪ &7Startet das Event.'
+    - '&c/mh stop &8▪ &7Beendet das laufende Event.'
+    - '&c/mh runner &8<&7Spieler&8> &8▪ &7Legt den Runner fest.'
+    - '&c/mh hunter &8<&7add&8|&7remove&8|&7list&8> [&7Spieler&8] &8▪ &7Verwaltet Hunter.'
+    - '&c/mh status &8▪ &7Zeigt den aktuellen Status.'
+    - '&c/mh reload &8▪ &7Lädt config.yml und messages.yml neu.'
+  unknown: '&cUnbekannter Unterbefehl. Nutze &f/mh help&c.'
+  usage: '&7Benutzung: &f%usage%'
+  hunter-list: '&7Hunter &8(&f%count%&8)&7: &f%hunters%'
+  reloaded: '&aKonfiguration und Nachrichten wurden neu geladen.'
+  status:
+    - '&8&m          &r &c&lManhunt Status &8&m          '
+    - '&7Status: &f%state%'
+    - '&7Runner: &f%runner%'
+    - '&7Hunter: &f%hunters%'
+    - '&7Laufzeit: &f%time%'
+
+# %state%, %runner%, %hunters%, %time%, %player%, %seconds%, %reason%, %lock%, %location%, %dimension%
+game:
+  already-running: '&cEs läuft bereits ein Manhunt-Event. Nutze &f/mh stop&c.'
+  not-running: '&cEs läuft aktuell kein Manhunt-Event.'
+  no-runner: '&cEs ist noch kein Runner festgelegt. Nutze &f/mh runner <Spieler>&c.'
+  not-enough-players: '&cEs werden mindestens &fzwei Spieler &cbenötigt (1 Runner + 1 Hunter).'
+  you-are-runner: '&7Du bist der &cRunner&7! &8▪ &7Lauf so weit du kannst.'
+  countdown-cancelled: '&cDer Countdown wurde abgebrochen, weil der Runner gestorben ist.'
+  countdown: '&c&lManhunt &r&7startet in &f%seconds%s&7...'
+  countdown-title: '&c&l%seconds%'
+  countdown-subtitle: '&7Bereit machen!'
+  started: '&8&m     &r &c&lMANHUNT GESTARTET &8&m     \n&r&7Runner: &c%runner% &8▪ &7Hunter: &f%hunters%'
+  started-title: '&c&lMANHUNT'
+  started-subtitle: '&7Lauf, &c%runner%&7, lauf!'
+  stopped: '&c&lManhunt &r&7wurde gestoppt. &8(&f%reason%&8)'
+  runner-quit: '&eDer Runner &f%player% &ehat das Spiel verlassen - das Event läuft weiter.'
+  # Siegesnachricht der Hunter. Emoji-Variante (🎉) nur mit Emoji-Resourcepack sichtbar:
+  # '&6&l🎉 DIE HUNTER HABEN GEWONNEN! &r&7%runner% ist gestorben.'
+  win-runner-died: '&6&l✦ DIE HUNTER HABEN GEWONNEN! &r&7%runner% ist gestorben &8(&f%cause%&8)'
+  win-title: '&6&lHUNTER-SIEG!'
+  win-subtitle: '&7%runner% ist gestorben.'
+  runner-set: '&a%player% &7ist jetzt der &cRunner&7.'
+  runner-offline: '&cDer Spieler &f%player% &cist nicht online.'
+
+hunter:
+  assigned: '&f%player% &7ist jetzt &cHunter&7.'
+  removed: '&f%player% &7ist kein Hunter mehr.'
+  runner-blocked: '&cDer Runner &f%player% &ckann kein Hunter sein.'
+  you-are-hunter: '&7Du bist &cHunter&7! Verfolge den Runner mit dem &cTracker&7.'
+  death-info: '&8☠ &f%player% &7ist gestorben &8▪ &7Respawn-Sperre: &f%lock%'
+  death-title: '&c&lGESTORBEN'
+  death-subtitle: '&7Respawn in &f%lock%'
+  locked-rejoin: '&7Du bist noch &f%lock% &7gesperrt.'
+  respawned: '&aDu bist wieder im Spiel! &7Respawn bei &f%location%&7.'
+  respawn-title: '&a&lRESPAWN'
+  respawn-subtitle: '&7Zurück im Spiel!'
+  respawn-location-spawn: '&7Weltspawn'
+  respawn-location-death: '&7deiner Todesstelle'
+  respawn-location-bed: '&7deinem Bett'
+
+tracker:
+  given: '&7Du hast den &cGorgii-Tracker &7erhalten.'
+  removed: '&7Dein Tracker wurde entfernt.'
+  no-target: '&cDer Tracker hat aktuell kein Ziel. &8(&7kein aktiver Runner&8)'
+  click-same-world: '&7Runner &f%runner% &8▪ &7Dimension: &f%dimension% &8▪ &7Entfernung: &f%distance% Blöcke &8▪ &7Richtung: &f%direction% &8(&f%x%&8/&f%y%&8/&f%z%&8)'
+  click-other-dimension: '&c&l⚠ Der Runner ist in einer anderen Dimension! &r&7Er befindet sich in &f%dimension%&7 &8▪ &7Reise durch ein Portal, um ihn zu verfolgen.'
+  click-cooldown: '&8Bitte warte einen Moment...'
+  drop-denied: '&cDer Tracker kann nicht abgelegt werden.'
+  store-denied: '&cDer Tracker kann nicht in Behälter gelegt werden.'
+  dimension-hint: '&7Achtung: Der Runner befindet sich in &f%dimension%&7.'
+
+plugin:
+  shutting-down: '&cDas Manhunt-Event wurde gestoppt, weil das Plugin deaktiviert wurde.'
+
+# --------------------------------------------------------------------------
+#  Admin-Panel (GUI)
+# --------------------------------------------------------------------------
+gui:
+  filler-name: ' '
+  close-name: '&c&lSchließen'
+  close-lore:
+    - '&7Schließt das Admin-Panel.'
+  status:
+    name-idle: '&fStatus &8▪ &r&cBEREIT'
+    name-running: '&fStatus &8▪ &r&a&lLÄUFT'
+    name-countdown: '&fStatus &8▪ &r&e&lCOUNTDOWN'
+    lore:
+      - '&8&m                     '
+      - '&7Runner: &f%runner%'
+      - '&7Hunter: &f%hunters%'
+      - '&7Laufzeit: &f%time%'
+      - '&8&m                     '
+      - '&7Respawn-Sperre: &f%lock%'
+      - '&7Countdown: &f%countdown%s'
+  start:
+    name: '&a&lEVENT STARTEN'
+    lore:
+      - '&8&m                     '
+      - '&7Startet das Manhunt-Event.'
+      - '&7Als Runner wird &f%runner% &7gesetzt.'
+      - '&8&m                     '
+      - '&7Linksklick &8▪ &aStarten'
+    running-name: '&8EVENT STARTEN'
+    running-lore:
+      - '&7Es läuft bereits ein Event.'
+      - '&8Stoppe es zuerst mit &c/mh stop&8.'
+  stop:
+    name: '&c&lEVENT STOPPEN'
+    lore:
+      - '&8&m                     '
+      - '&7Beendet das laufende Event.'
+      - '&7Task und Timer werden sauber gestoppt.'
+      - '&8&m                     '
+      - '&7Linksklick &8▪ &cStoppen'
+    idle-name: '&8EVENT STOPPEN'
+    idle-lore:
+      - '&7Es läuft aktuell kein Event.'
+  runner:
+    name: '&c&lRUNNER &8▪ &f%runner%'
+    none-name: '&c&lRUNNER FESTLEGEN'
+    lore:
+      - '&8&m                     '
+      - '&7Aktueller Runner: &f%runner%'
+      - '&8&m                     '
+      - '&7Linksklick &8▪ &fSpieler auswählen'
+  hunters:
+    name: '&c&lHUNTER &8▪ &f%hunters%'
+    lore:
+      - '&8&m                     '
+      - '&7Aktive Hunter:'
+      - '%list%'
+      - '&8&m                     '
+      - '&7Linksklick &8▪ &fHunter verwalten'
+  tracker:
+    given: '&aTracker an &f%count% &aHunter ausgegeben.'
+    name: '&e&lTRACKER AUSGEBEN'
+    lore:
+      - '&8&m                     '
+      - '&7Gibt allen Huntern einen frischen'
+      - '&7Gorgii-Tracker ins Inventar.'
+      - '&8&m                     '
+      - '&7Linksklick &8▪ &eAusgeben'
+  info:
+    name: '&f&lEINSTELLUNGEN'
+    lore:
+      - '&8&m                     '
+      - '&7Respawn-Sperre: &f%lock%s'
+      - '&7Countdown: &f%countdown%s'
+      - '&7Tracker-Update: &f%update% Ticks'
+      - '&7Timer-Format: &f%format%'
+      - '&8&m                     '
+      - '&7Alles einstellbar in der &fconfig.yml'
+  no-players: '&8- keine -'
+  picker:
+    head-name: '&f%player%'
+    back-name: '&f&lZURÜCK'
+    back-lore:
+      - '&7Zurück zum Admin-Panel.'
+    empty-name: '&8Keine Spieler online'
+    head-status-runner: '&cRunner'
+    head-status-hunter: '&cHunter'
+    head-status-none: '&8Zuschauer'
+    head-lore:
+      - '&8&m                     '
+      - '&7Rolle: &f%role%'
+      - '&8&m                     '
+      - '&7Linksklick &8▪ &f%action%'
+    action-runner: 'Als Runner festlegen'
+    action-hunter-add: 'Als Hunter hinzufügen'
+    action-hunter-remove: 'Aus den Huntern entfernen'

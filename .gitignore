@@ -1,0 +1,23 @@
+# Build-Ausgabe
+target/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+nbproject/
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# Lokale Test-Server (falls das Plugin direkt im Repo getestet wird)
+run/
+server/
+*.log
+logs/
